@@ -39,3 +39,26 @@ func Test_Part1(t *testing.T) {
 		})
 	}
 }
+
+func Test_Part2(t *testing.T) {
+	tests := []struct {
+		name  string
+		input string
+		want  int
+	}{
+		{
+			name:  "example",
+			input: input,
+			want:  230,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := NewDay3(input)
+			if got := d.Part2(); got != tt.want {
+				t.Errorf("Got %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

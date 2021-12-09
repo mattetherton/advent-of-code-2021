@@ -32,8 +32,8 @@ func Run() {
 	part1 := d.Part1()
 	fmt.Println("Part 1: ", part1)
 
-	// part2 := d.Part2()
-	// fmt.Println("Part 2: ", part2)
+	part2 := d.Part2()
+	fmt.Println("Part 2: ", part2)
 }
 
 func (d *day3) Part1() int {
@@ -66,4 +66,66 @@ func (d *day3) Part1() int {
 	gammaDecimal, _ := strconv.ParseInt(gamma, 2, 64)
 
 	return int(epsilonDecimal * gammaDecimal)
+}
+
+type finder func([]string, int) string
+
+func (d *day3) Part2() int {
+	input := strings.Split(d.input, "\n")
+
+	mostCommonFinder := func(input []string, index int) string { return mostCommon(input, index) }
+	oxygenRating, _ := ratingGenerator(input, mostCommonFinder)
+
+	leastCommonFinder := func(input []string, index int) string { return leastCommon(input, index) }
+	co2Rating, _ := ratingGenerator(input, leastCommonFinder)
+
+	return int(oxygenRating * co2Rating)
+}
+
+func ratingGenerator(input []string, find finder) (int64, error) {
+	for i := 0; i < len(input[0]); i++ {
+		input = reducer(input, i, find(input, i))
+		if len(input) == 1 {
+			break
+		}
+	}
+
+	return strconv.ParseInt(input[0], 2, 64)
+}
+
+func reducer(input []string, index int, target string) (reduced []string) {
+	for _, line := range input {
+		if string(line[index]) == target {
+			reduced = append(reduced, line)
+		}
+	}
+	return reduced
+}
+
+func filter(input []string, index int) (zeroes int, ones int) {
+	for _, val := range input {
+		if val[index] == '0' {
+			zeroes++
+		} else {
+			ones++
+		}
+	}
+
+	return zeroes, ones
+}
+
+func mostCommon(input []string, index int) string {
+	zeroes, ones := filter(input, index)
+	if zeroes > ones {
+		return "0"
+	}
+	return "1"
+}
+
+func leastCommon(input []string, index int) string {
+	zeroes, ones := filter(input, index)
+	if zeroes > ones {
+		return "1"
+	}
+	return "0"
 }
